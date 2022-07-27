@@ -30,6 +30,6 @@
     /* 85vh;  or use calc(100vh - header_height) */
 }
 .kanban-state-column {
-    border-radius: 15px;
+    border-radius: 8px;
     margin: 1em;
 }
