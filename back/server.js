@@ -7,7 +7,7 @@ const methodOverride = require('method-override')
 //Other dependecies
 //Imported Routes
 const routesRoute = require('./routes/routes')
-const projectRoutes = require('./controllers/projects')
+//const projectRoutes = require('./controllers/projects')
 //Logger
 const morgan = require('morgan')
 

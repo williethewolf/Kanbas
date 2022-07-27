@@ -6,13 +6,11 @@ const Schema = mongoose.Schema
 
 //Schema
 const issueSchema = new Schema({
-    title: String,
-    body : String,
-    status: String,
-    completed: Boolean,
-    type: String,
-    priority: String,
-    parentBoardId:{type: Schema.Types.ObjectId, ref: 'Board'},
+    name: String,
+    issues: Array,
+    issueStates: Array,
+    issueTypes: Array,
+    parentProjectId:{type: Schema.Types.ObjectId, ref: 'Project'},
     },
     {timestamps: { createdAt: false, updatedAt: true },
     },

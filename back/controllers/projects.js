@@ -18,10 +18,9 @@ projectRouter.get('/', (req,res) =>{
                     title: project.title,
                     owner: project.owner,
                     repo_URL: project.repo_URL,
-                    issues: project.issues,
-                    numberOfIssues: project.issues.length,
-                    issueStates: project.issueStates,
-                    issueTypes: project.issueTypes,
+                    boards: project.boards,
+                    numberOfBoards: project.boards.length,
+                    timestamps: project.timestamps.updatedAt,
                     request: {
                         type: 'GET',
                         unique_URL: req.protocol + '://' +req.get('host')+req.originalUrl+"/"+ project._id
@@ -48,10 +47,15 @@ projectRouter.get('/new', (req,res) => {
 })
 
 //DELETE
-projectRouter.delete('/:productId', (req, res) => {
-    Project.findByIdAndDelete(req.params.productId)
+projectRouter.delete('/:projectId', (req, res) => {
+    Project.findByIdAndDelete(req.params.projectId)
     .exec()
     .then(deletedProject =>{
+        if(!deletedProject){
+            return res.status(404).json({
+                message: "Issue not found"
+            })
+        }
         res.status(202).json(deletedProject)
     })
     .catch(err => {console.log(err)
@@ -62,9 +66,9 @@ projectRouter.delete('/:productId', (req, res) => {
 })
 
 //UPDATE
-projectRouter.put('/:productId', (req, res) => {
+projectRouter.put('/:projectId', (req, res) => {
     Project.findByIdAndUpdate(
-        req.params.productId,
+        req.params.projectId,
         req.body,
         {new: true})
         .exec()
@@ -79,9 +83,9 @@ projectRouter.put('/:productId', (req, res) => {
 })
 
 //PATCH FOR REFERENCE BUT NOT USING IT NOW
-projectRouter.patch('/:productId', (req, res) =>{
+projectRouter.patch('/:projectId', (req, res) =>{
     Project.findByIdAndUpdate(
-        req.params.productId,
+        req.params.projectId,
          {$set: req.body},
         {new: true}
     )
@@ -99,10 +103,9 @@ projectRouter.post('/',(req, res) => {
                     title: newCreatedProject.title,
                     owner: newCreatedProject.owner,
                     repo_URL: newCreatedProject.repo_URL,
-                    issues: newCreatedProject.issues,
-                    numberOfIssues: newCreatedProject.issues.length,
-                    issueStates: newCreatedProject.issueStates,
-                    issueTypes: newCreatedProject.issueTypes,
+                    boards: newCreatedProject.boards,
+                    numberOfBoards: newCreatedProject.boards.length,
+                    timestamps: newCreatedProject.timestamps.updatedAt,
                     request: {
                         type: 'GET',
                         unique_URL: req.protocol + '://' +req.get('host')+req.originalUrl+ newCreatedProject._id
@@ -120,8 +123,8 @@ projectRouter.post('/',(req, res) => {
 //EDIT
 
 //SHOW
-projectRouter.get('/:productId', (req, res) =>{
-    Project.findById(req.params.productId)
+projectRouter.get('/:projectId', (req, res) =>{
+    Project.findById(req.params.projectId)
     .exec()
     .then(foundProject => {
         if(foundProject){
@@ -130,10 +133,9 @@ projectRouter.get('/:productId', (req, res) =>{
                         title: foundProject.title,
                         owner: foundProject.owner,
                         repo_URL: foundProject.repo_URL,
-                        issues: foundProject.issues,
-                        numberOfIssues: foundProject.issues.length,
-                        issueStates: foundProject.issueStates,
-                        issueTypes: foundProject.issueTypes,
+                        boards: foundProject.boards,
+                        numberOfBoards: foundProject.boards.length,
+                        timestamps: foundProject.timestamps.updatedAt,
                         request: {
                             type: 'GET',
                             unique_URL: req.protocol + '://' +req.get('host')+req.originalUrl
@@ -143,7 +145,7 @@ projectRouter.get('/:productId', (req, res) =>{
                 res.status(200).json(response)
         }else{
             res.status(404).json({
-                meessage: "No valid entry for provided ID"
+                message: "No valid entry for provided ID"
             })
         }
     })

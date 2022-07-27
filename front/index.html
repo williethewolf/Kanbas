@@ -5,10 +5,170 @@
           <meta http-equiv="X-UA-Compatible" content="IE=edge">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link rel="stylesheet" href="./css/style.css">
+           <!-- Compiled and minified MATERIAL CSS -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
           <title>Document</title>
       </head>
       <body>
+        <nav>
+            <div class="nav-wrapper">
+              <a href="#" class="brand-logo center"><span class="material-symbols-outlined">
+                        view_kanban
+                        </span>Kanboard</a>
+              <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+              <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <li> <!-- Dropdown Trigger -->
+                    <a class='dropdown-trigger btn' href='#' data-target='top-bar-project-dropdown'>Projects</a>
+                  
+                    <!-- Dropdown Structure -->
+                    <ul id='top-bar-project-dropdown' class='dropdown-content'>
+                      <li><a href="#!">one</a></li>
+                      <li><a href="#!">two</a></li>
+                      <li class="divider" tabindex="-1"></li>
+                      <li><a class="waves-effect waves-light btn">New Project</a></li>
+                    </ul></li>
+              </ul>
+            </div>
+          </nav>
+          <nav>
+            <div class="nav-wrapper teal lighten-4">
+              <div class="container">
+                <a href="#" class="brand-logo">Project Name</a>
+              <ul id="nav-mobile" class="right hide-on-med-and-down">
+              </ul>
+            </div>
+            </div>
+          </nav>
+          <div class="row flex">
 
+            <div class="col s3 teal darken-2">
+                <h5 class="grey-text text-lighten-5">Boards</h5>
+                <li class="divider"></li>
+                <ul id="boards-list">
+              <!-- boards cards go in here -->
+            
+                <div class="card-panel teal white-text">
+                  <span class="card-title"><h5>Title</h5></span>
+                  <!-- <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a> -->
+                  <li class="divider"></li>
+                  <div class="card-content">
+                    <p></p>
+                  
+                  </div>
+                </div>
+                
+              <div class="card-panel teal">
+                <span class="white-text">I am a very simple card. I am good at containing small bits of information.
+                I am convenient because I require little markup to use effectively. I am similar to what is called a panel in other frameworks.
+                </span>
+              </div>
+              </ul>
+            </div>
+      
+            <div class="col s9 cyan darken-4 center-page" id="board">
+                <!--first column-->
+                <div class="col s12 m6 l3 cyan darken-3 kanban-state-column">
+                    <div class="row" id="board-states-container">
+                        <!-- column for header -->
+                        <p><h5 class="grey-text text-lighten-5 center">Icebox</h5></p>
+                    </div>
+                    <div class="row">
+                        <div  class="board-issues-container" id="column1">
+                        <!-- cards in here -->
+                            
+                                <div class="col l12 draggable">
+                                    <p><div class="card">
+                                        <div class="card-content">
+                                            <span class="card-title activator grey-text text-darken-4">Issue #1<i class="material-icons right">more_vert</i></span>
+                                            <p><a href="#">edit</a></p>
+                                        </div>
+                                        <div class="card-reveal">
+                                            <span class="card-title grey-text text-darken-4">Issue #1<i class="material-icons right">close</i></span>
+                                            <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                                        </div>
+                                    </div></p>
+                                </div>
+                            
+                             
+                                <div class="col l12 draggable" draggable=true>
+                                    <p><div class="card">
+                                        <div class="card-content">
+                                            <span class="card-title activator grey-text text-darken-4">Issue #4<i class="material-icons right">more_vert</i></span>
+                                            <p><a href="#">edit</a></p>
+                                        </div>
+                                        <div class="card-reveal">
+                                            <span class="card-title grey-text text-darken-4">Issue #4<i class="material-icons right">close</i></span>
+                                            <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                                        </div>
+                                    </div></p>
+                                </div> 
+                            
+                            <!-- end of issue cards  -->                      
+                            </div>
+                        </div>
+                </div>
+                 <!-- second column-->
+                 <div class="col s12 m6 l3 cyan darken-3 kanban-state-column">
+                    <div class="row" id="board-states-container">
+                        <!-- column for header -->
+                        <p><h5 class="grey-text text-lighten-5 center">To Do</h5></p>
+                    </div>
+                    <div class="row">
+                        <div  class="board-issues-container" id="column2">
+                        <!-- cards in here -->
+                            <div class="col l12 draggable" draggable=true>
+                                <p><div class="card">
+                                    <div class="card-content">
+                                        <span class="card-title activator grey-text text-darken-4">Issue #2<i class="material-icons right">more_vert</i></span>
+                                        <p><a href="#">edit</a></p>
+                                    </div>
+                                    <div class="card-reveal">
+                                        <span class="card-title grey-text text-darken-4">Issue #2<i class="material-icons right">close</i></span>
+                                        <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                                    </div>
+                                </div></p>
+                            </div> 
+                            <!-- end of issue cards  -->                      
+                        </div>
+                        </div>
+                </div>    
+                <!--Column 3-->
+                <div class="col s12 m6 l3 cyan darken-3 kanban-state-column">
+                    <div class="row" id="board-states-container">
+                        <!-- column for header -->
+                        <p><h5 class="grey-text text-lighten-5 center">Completed</h5></p>
+                    </div>
+                    <div class="row">
+                        <div  class="board-issues-container" id="column3">
+                        <!-- cards in here -->
+                            <div class="col l12 draggable" draggable=true>
+                                <p><div class="card">
+                                    <div class="card-content">
+                                        <span class="card-title activator grey-text text-darken-4">Issue #3<i class="material-icons right">more_vert</i></span>
+                                        <p><a href="#">edit</a></p>
+                                    </div>
+                                    <div class="card-reveal">
+                                        <span class="card-title grey-text text-darken-4">Issue #3<i class="material-icons right">close</i></span>
+                                        <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                                    </div>
+                                </div></p>
+                            </div> 
+                            <!-- end of issue cards  -->                      
+                        </div>
+                        </div>
+                </div>    
+            <!-- end of pin board-->
+            </div>
+      
+          </div>      
+                
+          <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
           <script src="./scripts/script.js"></script>
+          <!-- Compiled and minified MATERIAL JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+          <!--sortable script-->
+        
       </body>
       </html>

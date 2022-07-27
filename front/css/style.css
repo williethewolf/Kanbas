@@ -1,0 +1,35 @@
+.center-page {
+    padding-left: 3rem !important
+}
+
+.draggable{
+    cursor: move;
+    margin: -24px 1px;
+    
+}
+
+.card{
+    box-shadow: 2px -2px 4px rgb(0 0 0 / 0.4)!important
+}
+
+
+.card .card-reveal{
+    overflow-y: visible;
+    transform: translateY(-62%) !important;
+    position: relative !important;
+}
+
+.row .col.l3{
+    width: 31% !important
+}
+
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: calc(100vh - 146px) 
+    /* 85vh;  or use calc(100vh - header_height) */
+}
+.kanban-state-column {
+    border-radius: 15px;
+    margin: 1em;
+}

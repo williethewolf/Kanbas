@@ -8,7 +8,9 @@ const router = express.Router()
 
 //imported routes
 const projectRoutesController = require('../controllers/projects')
+const boardRoutesController = require('../controllers/boards')
 const issueRoutesController = require('../controllers/issues')
+
 //TBD import User routes
 
 
@@ -18,6 +20,7 @@ router
         //res.redirect('/projects')
     })
   .use('/projects', projectRoutesController)
+  .use('/boards/', boardRoutesController)
   .use('/issues', issueRoutesController)
   .use((req, res, next) => {
     const err = new Error('Not found')
