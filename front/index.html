@@ -23,12 +23,15 @@
                     <a class='dropdown-trigger btn' href='#' data-target='top-bar-project-dropdown'>Projects</a>
                   
                     <!-- Dropdown Structure -->
-                    <ul id='top-bar-project-dropdown' class='dropdown-content'>
-                      <li><a href="#!">one</a></li>
-                      <li><a href="#!">two</a></li>
+                    <ul id='top-bar-project-dropdown' class='dropdown-content' >
+                      <div id="project-list">
+                      <li><a href="#!">Project one</a></li>
+                      <li><a href="#!">Project two</a></li>
+                      </div>
                       <li class="divider" tabindex="-1"></li>
-                      <li><a class="waves-effect waves-light btn">New Project</a></li>
-                    </ul></li>
+                       <a class="waves-effect waves-light btn white-text modal-trigger" href="#new-project-modal">New Project</a>
+                    </ul>
+                </li>   
               </ul>
             </div>
           </nav>
@@ -41,30 +44,70 @@
             </div>
             </div>
           </nav>
+<!-- MODAL FOR NEW PROJECT-->
+<div id="new-project-modal" class="modal">
+    <div class="modal-content">
+      <h4>Create New Project</h4>
+      <form class="form-horizontal" action="http://localhost:5501/projects/" method="POST" id="new-project-form">
+        <div class="form-group">
+          <label class="" for="title">Project Name:</label>
+          <div class="">
+            <input type="title" name="title" class="" id="title" placeholder="Enter Project Name" required>
+          </div>
+        </div>
+        <div class="form-group">
+            <label class="" for="title">Project URL:</label>
+            <div class="">
+              <input type="repo_URL" name="repo_URL" class="" id="repo_URL" placeholder="https://github.com/user/projectname" >
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="entry">Brief description</label>
+            <div class="">
+                <textarea class="" name="description" id="description" rows="3"></textarea>
+            </div>
+        </div>
+    </form>      
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <button type="submit" form="new-project-form" class="btn btn-success">Submit</button>
+    </div>
+    
+  </div>
+  <!--BOARDS DISPLAY-->
+
           <div class="row flex">
 
             <div class="col s3 teal darken-2">
                 <h5 class="grey-text text-lighten-5">Boards</h5>
-                <li class="divider"></li>
+                <div class="divider"></div>
                 <ul id="boards-list">
               <!-- boards cards go in here -->
-            
-                <div class="card-panel teal white-text">
-                  <span class="card-title"><h5>Title</h5></span>
-                  <!-- <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a> -->
-                  <li class="divider"></li>
-                  <div class="card-content">
-                    <p></p>
-                  
-                  </div>
-                </div>
-                
-              <div class="card-panel teal">
-                <span class="white-text">I am a very simple card. I am good at containing small bits of information.
-                I am convenient because I require little markup to use effectively. I am similar to what is called a panel in other frameworks.
-                </span>
-              </div>
-              </ul>
+                    <li>
+                        <div class="card-panel teal white-text">
+                            <span class="card-title"><h5>Board #1</h5></span>
+                            <!-- <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a> -->
+                            <div class="divider"></div>
+                            <div class="card-content">
+                                <p></p>                            
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="card-panel teal white-text">
+                            <span class="card-title"><h5>Board #1</h5></span>
+                            <!-- <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a> -->
+                            <div class="divider"></div>
+                            <div class="card-content">
+                                <p></p>                            
+                            </div>
+                        </div>
+                    </li>
+                    
+                </ul>
             </div>
       
             <div class="col s9 cyan darken-4 center-page" id="board">

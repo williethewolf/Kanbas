@@ -10,6 +10,7 @@ const projectSchema = new Schema({
     owner: String,
     repo_URL: String,
     boards: Array,
+    description: String,
     },
     {timestamps: { createdAt: false, updatedAt: true },
     },

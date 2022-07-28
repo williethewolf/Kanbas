@@ -15,12 +15,14 @@ projectRouter.get('/', (req,res) =>{
             count: allProjects.length,
             projects: allProjects.map(project =>{
                 return{
+                    _id: project._id,
                     title: project.title,
                     owner: project.owner,
                     repo_URL: project.repo_URL,
                     boards: project.boards,
                     numberOfBoards: project.boards.length,
-                    timestamps: project.timestamps.updatedAt,
+                    description: project.description,
+                    timestamps: project.timestamps,
                     request: {
                         type: 'GET',
                         unique_URL: req.protocol + '://' +req.get('host')+req.originalUrl+"/"+ project._id
@@ -100,12 +102,14 @@ projectRouter.post('/',(req, res) => {
     .then(newCreatedProject => {
         const response = {
             project:{
+                    _id: newCreatedProject._id,
                     title: newCreatedProject.title,
                     owner: newCreatedProject.owner,
                     repo_URL: newCreatedProject.repo_URL,
                     boards: newCreatedProject.boards,
                     numberOfBoards: newCreatedProject.boards.length,
-                    timestamps: newCreatedProject.timestamps.updatedAt,
+                    description: newCreatedProject.description,
+                    timestamps: newCreatedProject.timestamps,
                     request: {
                         type: 'GET',
                         unique_URL: req.protocol + '://' +req.get('host')+req.originalUrl+ newCreatedProject._id
@@ -130,12 +134,14 @@ projectRouter.get('/:projectId', (req, res) =>{
         if(foundProject){
             const response = {
                 project:{
+                        _id: foundProject._id,
                         title: foundProject.title,
                         owner: foundProject.owner,
                         repo_URL: foundProject.repo_URL,
                         boards: foundProject.boards,
                         numberOfBoards: foundProject.boards.length,
-                        timestamps: foundProject.timestamps.updatedAt,
+                        description: foundProject.description,
+                        timestamps: foundProject.timestamps,
                         request: {
                             type: 'GET',
                             unique_URL: req.protocol + '://' +req.get('host')+req.originalUrl

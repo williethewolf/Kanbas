@@ -11,9 +11,10 @@ const issueSchema = new Schema({
     issueStates: Array,
     issueTypes: Array,
     parentProjectId:{type: Schema.Types.ObjectId, ref: 'Project'},
+    description: String,
     },
     {timestamps: { createdAt: false, updatedAt: true },
     },
 )
 
-module.exports = mongoose.model('Issue', issueSchema)
+module.exports = mongoose.model('Board', issueSchema)

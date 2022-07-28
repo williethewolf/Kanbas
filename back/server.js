@@ -23,6 +23,7 @@ mongoose.connection.on('connected',() =>{
 })
 
 //Middleware
+app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 app.use(methodOverride('_method'))
 app.use(express.static('public'))

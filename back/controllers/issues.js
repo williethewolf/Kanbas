@@ -1,6 +1,5 @@
 //Dependencies
 const issueRouter = require('express').Router()
-const issue = require('../models/issue')
 const Issue = require("../models/issue")
 
 //ROUTES
@@ -8,13 +7,14 @@ const Issue = require("../models/issue")
 
 //INDEX
 issueRouter.get('/', (req,res) =>{
-    issue.find({})
+    Issue.find({})
     .exec()
     .then(allIssues => {
         const response = {
             count: allIssues.length,
             issues: allIssues.map(issue =>{
                 return{
+                    _id: issue._id,
                     parentProjectId: issue.parentBoardId,
                     title: issue.title,
                     body : issue.body,
@@ -22,7 +22,7 @@ issueRouter.get('/', (req,res) =>{
                     completed: issue.completed,
                     type: issue.type,
                     priority: issue.priority,
-                    timestamps: issue.timestamps.updatedAt,
+                    timestamps: issue.timestamps,
                 
                     request: {
                     type: 'GET',
@@ -100,6 +100,7 @@ issueRouter.post('/',(req, res) => {
     .then(newCreatedIssue => {
         const response = {
             issue:{
+                _id: newCreatedIssue._id,
                 parentProjectId: newCreatedIssue.parentBoardId,
                 title: newCreatedIssue.title,
                 body : newCreatedIssue.body,
@@ -107,7 +108,7 @@ issueRouter.post('/',(req, res) => {
                 completed: newCreatedIssue.completed,
                 type: newCreatedIssue.type,
                 priority: newCreatedIssue.priority,
-                timestamps: newCreatedIssue.timestamps.updatedAt,
+                timestamps: newCreatedIssue.timestamps,
             
                 request: {
                 type: 'GET',
@@ -134,6 +135,7 @@ issueRouter.get('/:issueId', (req, res) => {
         if(foundIssue){
             const response = {
                 issue:{
+                        _id: foundIssue._id,
                         parentProjectId: foundIssue.parentBoardId,
                         title: foundIssue.title,
                         body : foundIssue.body,
@@ -141,7 +143,7 @@ issueRouter.get('/:issueId', (req, res) => {
                         completed: foundIssue.completed,
                         type: foundIssue.type,
                         priority: foundIssue.priority,
-                        timestamps: foundIssue.timestamps.updatedAt,
+                        timestamps: foundIssue.timestamps,
                     
                         request: {
                         type: 'GET',

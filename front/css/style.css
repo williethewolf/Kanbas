@@ -33,3 +33,7 @@
     border-radius: 8px;
     margin: 1em;
 }
+
+#top-bar-project-dropdown{
+    width: unset !important;
+}

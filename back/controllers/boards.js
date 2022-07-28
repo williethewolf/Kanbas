@@ -1,6 +1,6 @@
 //Dependencies
 const boardRouter = require('express').Router()
-const Board = require("../models/Board")
+const Board = require("../models/board")
 //const mongoose = require ("mongoose")
 
 //ROUTES
@@ -13,15 +13,17 @@ boardRouter.get('/', (req,res) =>{
     .then(allBoards => {
         const response = {
             count: allBoards.length,
-            Boards: allBoards.map(board =>{
+            boards: allBoards.map(board =>{
                 return{
+                    _id: board._id,
                     name: board.name,
                     issues: board.issues,
                     numberOfIssues: board.issues.length,
                     issueStates: board.issueStates,
                     issueTypes: board.issueTypes,
                     parentProjectId: board.parentProjectId,
-                    timestamps: board.timestamps.updatedAt,
+                    description: board.description,
+                    timestamps: board.timestamps,
                     request: {
                         type: 'GET',
                         unique_URL: req.protocol + '://' +req.get('host')+req.originalUrl+"/"+ board._id
@@ -101,13 +103,15 @@ boardRouter.post('/',(req, res) => {
     .then(newCreatedBoard => {
         const response = {
             board:{
+                    _id: newCreatedBoard._id,
                     name: newCreatedBoard.name,
                     issues: newCreatedBoard.issues,
                     numberOfIssues: newCreatedBoard.issues.length,
                     issueStates: newCreatedBoard.issueStates,
                     issueTypes: newCreatedBoard.issueTypes,
                     parentProjectId: newCreatedBoard.parentProjectId,
-                    timestamps: newCreatedBoard.timestamps.updatedAt,
+                    description: newCreatedBoard.description,
+                    timestamps: newCreatedBoard.timestamps,
                     request: {
                         type: 'GET',
                         unique_URL: req.protocol + '://' +req.get('host')+req.originalUrl+ newCreatedBoard._id
@@ -132,13 +136,15 @@ boardRouter.get('/:boardId', (req, res) =>{
         if(foundBoard){
             const response = {
                 board:{
+                        _id: foundBoard._id,
                         name: foundBoard.name,
                         issues: foundBoard.issues,
                         numberOfIssues: foundBoard.issues.length,
                         issueStates: foundBoard.issueStates,
                         issueTypes: foundBoard.issueTypes,
                         parentProjectId: foundBoard.parentProjectId,
-                        timestamps: foundBoard.timestamps.updatedAt,
+                        description: foundBoard.description,
+                        timestamps: foundBoard.timestamps,
                         request: {
                             type: 'GET',
                             unique_URL: req.protocol + '://' +req.get('host')+req.originalUrl
