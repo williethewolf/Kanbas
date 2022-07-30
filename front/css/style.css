@@ -1,11 +1,17 @@
 .center-page {
     padding-left: 3rem !important
 }
-
+/* dragging cards */
 .draggable{
     cursor: move;
     margin: -24px 1px;
     
+}
+/* dragging whole board */
+
+#board{
+    overflow-x: scroll;
+    flex-shrink: 0
 }
 
 .card{
@@ -37,3 +43,26 @@
 #top-bar-project-dropdown{
     width: unset !important;
 }
+
+/* cards as buttons */
+.fullclick {
+    list-style: none;
+    margin: 1em 0;
+    padding: 20px 10px;
+    background: #2b2b2b;
+    position: relative;
+  }
+  .fullclick a.main {
+    color: #85baff;
+    text-align: right;
+    display: block;
+    z-index: 1;
+  }
+  .fullclick li a.main::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    content: ' ';
+  }

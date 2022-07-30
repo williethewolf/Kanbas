@@ -8,7 +8,7 @@ const Schema = mongoose.Schema
 const issueSchema = new Schema({
     title: String,
     body : String,
-    status: String,
+    status: {type: String, default: "IceBox"},
     completed: Boolean,
     type: String,
     priority: String,

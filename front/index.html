@@ -13,7 +13,7 @@
       </head>
       <body>
         <nav>
-            <div class="nav-wrapper">
+            <div class="nav-wrapper  red lighten-2">
               <a href="#" class="brand-logo center"><span class="material-symbols-outlined">
                         view_kanban
                         </span>Kanboard</a>
@@ -38,14 +38,14 @@
           <nav>
             <div class="nav-wrapper teal lighten-4">
               <div class="container">
-                <a href="#" class="brand-logo">Project Name</a>
+                <a href="#" class="brand-logo" id="project-title-display">Select a Project</a>
               <ul id="nav-mobile" class="right hide-on-med-and-down">
               </ul>
             </div>
             </div>
           </nav>
 <!-- MODAL FOR NEW PROJECT-->
-<div id="new-project-modal" class="modal">
+<div id="new-project-modal" class="modal teal lighten-4">
     <div class="modal-content">
       <h4>Create New Project</h4>
       <form class="form-horizontal" action="http://localhost:5501/projects/" method="POST" id="new-project-form">
@@ -63,9 +63,9 @@
         </div>
         
         <div class="form-group">
-            <label for="entry">Brief description</label>
+            <label for="entry">Brief description (max 85 char)</label>
             <div class="">
-                <textarea class="" name="description" id="description" rows="3"></textarea>
+                <textarea class="materialize-textarea white" name="description" id="" rows="3" maxlength="85"></textarea>
             </div>
         </div>
     </form>      
@@ -73,6 +73,59 @@
     <div class="modal-footer">
       <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancel</a>
       <button type="submit" form="new-project-form" class="btn btn-success">Submit</button>
+    </div>
+    
+  </div>
+
+  <!--MODAL FOR NEW BOARD-->
+  <div id="new-board-modal" class="modal teal grey-text text-lighten-5">
+    <div class="modal-content">
+      <h4>Create New Board</h4>
+      <form class="form-horizontal" action="http://localhost:5501/boards/" method="POST" id="new-board-form">
+        <div class="form-group">
+          <label class="" for="name">Board Name:</label>
+          <div class="">
+            <input type="name" name="name" class="" placeholder="Enter Board Name" required>
+          </div>
+        </div>
+             
+        <div class="form-group">
+            <label for="entry">Brief description (max 85 char)</label>
+            <div class="">
+                <textarea class="materialize-textarea white" name="description" id="" rows="3" maxlength="85"></textarea>
+            </div>
+        </div>
+    </form>      
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <button type="submit" form="new-board-form" class="btn btn-success">Submit</button>
+    </div>
+    
+  </div>
+
+  <!--MODAL FOR NEW ISSUE-->
+  <div id="new-issue-modal" class="modal">
+    <div class="modal-content">
+      <h4>Create New Issue</h4>
+      <form class="form-horizontal" action="http://localhost:5501/issues/" method="POST" id="new-issue-form">
+        <div class="form-group">
+          <label class="" for="title">Issue Title:</label>
+          <div class="">
+            <input type="title" name="title" class="" id="" placeholder="Enter Issue Title" required>
+          </div>
+        </div>            
+        <div class="form-group">
+            <label for="body">Brief description (max 85 char)</label>
+            <div class="">
+                <textarea class="materialize-textarea white" name="body" id="" rows="3" maxlength="85"></textarea>
+            </div>
+        </div>
+    </form>      
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <button type="submit" form="new-issue-form" class="btn btn-success">Submit</button>
     </div>
     
   </div>
@@ -108,6 +161,13 @@
                     </li>
                     
                 </ul>
+                    <div class="card teal white-text" id="new-board">
+                        <div class="card-content">
+                            <span class="card-title"><h6>Create New Board</h6></span>
+                            <a class="btn-floating halfway-fab waves-effect waves-light  red lighten-2 modal-trigger" href="#new-board-modal"><i class="material-icons">add</i></a>
+                        </div>
+                    </div>                                     
+                  
             </div>
       
             <div class="col s9 cyan darken-4 center-page" id="board">
@@ -120,37 +180,46 @@
                     <div class="row">
                         <div  class="board-issues-container" id="column1">
                         <!-- cards in here -->
-                            
-                                <div class="col l12 draggable">
-                                    <p><div class="card">
-                                        <div class="card-content">
-                                            <span class="card-title activator grey-text text-darken-4">Issue #1<i class="material-icons right">more_vert</i></span>
-                                            <p><a href="#">edit</a></p>
-                                        </div>
-                                        <div class="card-reveal">
-                                            <span class="card-title grey-text text-darken-4">Issue #1<i class="material-icons right">close</i></span>
-                                            <p>Here is some more information about this product that is only revealed once clicked on.</p>
-                                        </div>
-                                    </div></p>
-                                </div>
-                            
                              
-                                <div class="col l12 draggable" draggable=true>
-                                    <p><div class="card">
-                                        <div class="card-content">
-                                            <span class="card-title activator grey-text text-darken-4">Issue #4<i class="material-icons right">more_vert</i></span>
-                                            <p><a href="#">edit</a></p>
-                                        </div>
-                                        <div class="card-reveal">
-                                            <span class="card-title grey-text text-darken-4">Issue #4<i class="material-icons right">close</i></span>
-                                            <p>Here is some more information about this product that is only revealed once clicked on.</p>
-                                        </div>
-                                    </div></p>
-                                </div> 
-                            
-                            <!-- end of issue cards  -->                      
+                            <div class="col l12 draggable">
+                                <p><div class="card">
+                                    <div class="card-content">
+                                        <span class="card-title activator grey-text text-darken-4">Issue #1<i class="material-icons right">more_vert</i></span>
+                                        <p><a href="#">edit</a></p>
+                                    </div>
+                                    <div class="card-reveal">
+                                        <span class="card-title grey-text text-darken-4">Issue #1<i class="material-icons right">close</i></span>
+                                        <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                                    </div>
+                                </div></p>
                             </div>
+                        
+                        
+                            <div class="col l12 draggable" draggable=true>
+                                <p><div class="card">
+                                    <div class="card-content">
+                                        <span class="card-title activator grey-text text-darken-4">Issue #4<i class="material-icons right">more_vert</i></span>
+                                        <p><a href="#">edit</a></p>
+                                    </div>
+                                    <div class="card-reveal">
+                                        <span class="card-title grey-text text-darken-4">Issue #4<i class="material-icons right">close</i></span>
+                                        <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                                    </div>
+                                </div></p>
+                            </div> 
                         </div>
+                                <!-- end of issue cards  -->
+                        <div class="col l12">
+                            <div class="card">
+                                <div class="card-content">
+                                    <span class="card-title"><h6>Create New Issue</h6></span>
+                                    <a class="btn-floating halfway-fab waves-effect waves-light red lighten-2 modal-trigger" href="#new-issue-modal""><i class="material-icons">add</i></a>
+                                </div>
+                            </div>
+                        </div>    
+                                                          
+                            
+                    </div>
                 </div>
                  <!-- second column-->
                  <div class="col s12 m6 l3 cyan darken-3 kanban-state-column">
