@@ -16,7 +16,7 @@
             <div class="nav-wrapper  red lighten-2">
               <a href="#" class="brand-logo center"><span class="material-symbols-outlined">
                         view_kanban
-                        </span>Kanboard</a>
+                        </span>Kanbas</a>
               <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
               <ul id="nav-mobile" class="left hide-on-med-and-down">
                 <li> <!-- Dropdown Trigger -->
@@ -29,7 +29,7 @@
                       <li><a href="#!">Project two</a></li>
                       </div>
                       <li class="divider" tabindex="-1"></li>
-                       <a class="waves-effect waves-light btn white-text modal-trigger" href="#new-project-modal">New Project</a>
+                       <a class="waves-effect waves-light btn white-text modal-trigger red lighten-2" href="#new-project-modal">New Project</a>
                     </ul>
                 </li>   
               </ul>
@@ -38,7 +38,7 @@
           <nav>
             <div class="nav-wrapper teal lighten-4">
               <div class="container">
-                <a href="#" class="brand-logo" id="project-title-display">Select a Project</a>
+                <div  class="large" style="font-size:2rem" id="project-title-display">Select a Project</div>
               <ul id="nav-mobile" class="right hide-on-med-and-down">
               </ul>
             </div>
@@ -77,6 +77,39 @@
     
   </div>
 
+  <!-- MODAL TO EDIT PROJECT-->
+<div id="edit-project-modal" class="modal teal lighten-4">
+  <div class="modal-content">
+    <h4>Edit Project</h4>
+    <form class="form-horizontal" action="http://localhost:5501/projects/" method="POST" id="edit-project-form">
+      <div class="form-group">
+        <label class="" for="title">Project Name:</label>
+        <div class="">
+          <input type="title" name="title" class="" id="title" placeholder="Enter Project Name" required>
+        </div>
+      </div>
+      <div class="form-group">
+          <label class="" for="title">Project URL:</label>
+          <div class="">
+            <input type="repo_URL" name="repo_URL" class="" id="repo_URL" placeholder="https://github.com/user/projectname" >
+          </div>
+      </div>
+      
+      <div class="form-group">
+          <label for="entry">Brief description (max 85 char)</label>
+          <div class="">
+              <textarea class="materialize-textarea white" name="description" id="" rows="3" maxlength="85"></textarea>
+          </div>
+      </div>
+  </form>      
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+    <button type="submit" form="edit-project-form" class="btn btn-success">Submit</button>
+  </div>
+  
+</div>
+
   <!--MODAL FOR NEW BOARD-->
   <div id="new-board-modal" class="modal teal grey-text text-lighten-5">
     <div class="modal-content">
@@ -104,6 +137,33 @@
     
   </div>
 
+  <!--MODAL TO EDIT BOARD-->
+  <div id="edit-board-modal" class="modal teal grey-text text-lighten-5">
+    <div class="modal-content">
+      <h4>Edit Board</h4>
+      <form class="form-horizontal" action="http://localhost:5501/boards/" method="POST" id="edit-board-form">
+        <div class="form-group">
+          <label class="" for="name">Board Name:</label>
+          <div class="">
+            <input type="name" name="name" class="" placeholder="Enter Board Name" required>
+          </div>
+        </div>
+             
+        <div class="form-group">
+            <label for="entry">Brief description (max 85 char)</label>
+            <div class="">
+                <textarea class="materialize-textarea white" name="description" id="" rows="3" maxlength="85"></textarea>
+            </div>
+        </div>
+    </form>      
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <button type="submit" form="edit-board-form" class="btn btn-success">Submit</button>
+    </div>
+    
+  </div>
+
   <!--MODAL FOR NEW ISSUE-->
   <div id="new-issue-modal" class="modal">
     <div class="modal-content">
@@ -126,6 +186,32 @@
     <div class="modal-footer">
       <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancel</a>
       <button type="submit" form="new-issue-form" class="btn btn-success">Submit</button>
+    </div>
+    
+  </div>
+
+  <!--MODAL TO EDIT ISSUE-->
+  <div id="edit-issue-modal" class="modal">
+    <div class="modal-content">
+      <h4>Edit Issue</h4>
+      <form class="form-horizontal" action="http://localhost:5501/issues/" method="POST" id="edit-issue-form">
+        <div class="form-group">
+          <label class="" for="title">Issue Title:</label>
+          <div class="">
+            <input type="title" name="title" class="" id="" placeholder="Enter Issue Title" required>
+          </div>
+        </div>            
+        <div class="form-group">
+            <label for="body">Brief description (max 85 char)</label>
+            <div class="">
+                <textarea class="materialize-textarea white" name="body" id="" rows="3" maxlength="85"></textarea>
+            </div>
+        </div>
+    </form>      
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <button type="submit" form="edit-issue-form" class="btn btn-success">Submit</button>
     </div>
     
   </div>

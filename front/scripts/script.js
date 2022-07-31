@@ -8,17 +8,22 @@ let boardsArray= []
 
 let currentProjectID = undefined
 let currentBoardID = undefined
+let currentIssueID = undefined
 
 let newBoardButton =document.getElementById("new-board")
 let newIssueButton =document.getElementById("new-issue")
 
+boardIssueColumnArray = []
+columnIssueContainerArray = []
+
 //classes
 class Project {
-    constructor(ID, title, boards, issues){
+    constructor(ID, title, boards, issues, description){
         this.ID = ID;
         this.title = title;
         this.boards = boards;
         this.issues = issues;
+        this.description = description;
     }
 }
 
@@ -53,6 +58,9 @@ const boardsSidebar = document.querySelector("#boards-list")
 const kanboard = document.querySelector("#board")
 const boardIssueContainer = document.querySelectorAll(".board-issues-container")
 const boardIssueColumn =document.querySelectorAll(".kanban-state-column")
+//Dom selectors for edit buttons
+let issueEditButton = document.querySelectorAll(".issue-edit-button")
+let boardEditButton = document.querySelectorAll(".board-edit-button")
 
 //WEB CSS INTERACTIVITY
 //button dropdown js
@@ -60,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('.dropdown-trigger');
     var instances = M.Dropdown.init(elems, {});
   });
-//Modal initialization
+//Modal initialization and visualization
 document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('.modal');
     var instances = M.Modal.init(elems, {});
@@ -73,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 
-//chips tags js
+//chips tags js - NOT IMPLEMENTED YET
 document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('.chips');
     var instances = M.Chips.init(elems, {});
@@ -88,37 +96,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
   //INTERACTIVITY
 
-  //Dragging html elements -CARDS-
-  const column1 = document.getElementById('column1')
-  const column2 = document.getElementById('column2')
-  const column3 = document.getElementById('column3')
-  const anyColumn = document.querySelectorAll('.board-issues-container')
-  new Sortable(column1, {
-      group:'boards',
-      animation: 350,
-      draggable: ".draggable",
-      direction: "vertical",
-  })
-  new Sortable(column2, {
-      group:'boards',
-      animation: 350,
-      draggable: ".draggable",
-      direction: "vertical",
-  })
-  new Sortable(column3, {
-      group:'boards',
-      animation: 350,
-      draggable: ".draggable",
-      direction: "vertical",
-  })
-anyColumn.forEach(col => {
+  //Dragging html elements -CARDS- sortableJS library
+function makeCardsDraggable(){
+const anyColumn = document.querySelectorAll('.board-issues-container')
+anyColumn.forEach((col, i) => {
     new Sortable(col, {
         group:'boards',
         animation: 350,
         draggable: ".draggable",
         direction: "vertical",
-    })
+        onAdd: (evt)=>{
+            const card = evt.item
+            const newStatus = card.parentElement.id.replace('container','')
+            console.log(newStatus)
+            fetch (`${kB_APIURL}issues/${card.id}`, {
+                method: 'PATCH',
+                headers: {"Content-type": "application/json"},
+                body: JSON.stringify({
+                    status: `${newStatus}`,
+                })
+            })
+            .then((response) => response.json())
+            .then((json) => console.log(json));
+        },
+    }) 
+    // console.log(col)
 })
+}
 
 
   //Dragging the kanboard to navigate
@@ -168,7 +172,7 @@ anyColumn.forEach(col => {
 //API INTERACTION
 
 //modal to post in API
-//Project modal
+//NEW Project modal
 const newProjectForm = document.getElementById('new-project-form')
 newProjectForm.addEventListener('submit', function (evt){
     evt.preventDefault()
@@ -194,7 +198,37 @@ newProjectForm.addEventListener('submit', function (evt){
     })
     closeModal()
   })
-//Boards modal
+
+  //EDIT Project modal
+const editProjectForm = document.getElementById('edit-project-form')
+editProjectForm.addEventListener('submit', function (evt){
+    evt.preventDefault()
+    //console.log(evt)
+    const formData = new FormData(this)
+    const searchParams = new URLSearchParams()
+    for (const pair of formData){
+        searchParams.append(pair[0], pair[1])
+    }
+
+    fetch(`${kB_APIURL}projects/${currentProjectID}`, {
+        method: 'PATCH',
+        body: searchParams,
+    })
+    .then( response => {
+        console.log(response)
+        editProjectForm.reset()
+        //these don't really execute do they?
+        populateKanboard()
+        projectNameDisplay()
+        return response.text()
+    })
+    .catch (err =>{
+        console.error(err)
+    })
+    closeModal()
+  })
+
+//NEW Boards modal
   const newBoardForm = document.getElementById('new-board-form')
   newBoardForm.addEventListener('submit', function (evt){
     evt.preventDefault()
@@ -228,7 +262,41 @@ newProjectForm.addEventListener('submit', function (evt){
   newBoardForm.append(projectIDsubmission)
   }
 
-  //Issues modal
+  //EDIT Boards modal
+  const editBoardForm = document.getElementById('edit-board-form')
+  editBoardForm.addEventListener('submit', function (evt){
+    evt.preventDefault()
+    //console.log(evt)
+    setFormToProjectID()
+    const formData = new FormData(this)
+    const searchParams = new URLSearchParams()
+    for (const pair of formData){
+        searchParams.append(pair[0], pair[1])
+    }
+    console.log(searchParams)
+
+    fetch(`${kB_APIURL}boards/${currentBoardID}`, {
+        method: 'PATCH',
+        body: searchParams,
+    })
+    .then( response => {
+        console.log(response)
+        editBoardForm.reset()
+        populateKanboard()
+        return response.text()
+    })
+    .catch (err =>{
+        console.error(err)
+    })
+    closeModal()
+  })
+  function setFormToProjectID (){
+    let projectIDsubmission = document.createElement('div')
+    projectIDsubmission.innerHTML = `<input type="hidden" name="parentProjectId" value="${currentProjectID}" />`
+  newBoardForm.append(projectIDsubmission)
+  }
+
+  //NEW Issues modal
   const newIssueForm = document.getElementById('new-issue-form')
   newIssueForm.addEventListener('submit', function (evt){
     evt.preventDefault()   
@@ -262,6 +330,54 @@ newProjectForm.addEventListener('submit', function (evt){
   newIssueForm.append(boardIDsubmission)
   }
 
+  //EDIT Issues modal
+  const editIssueForm = document.getElementById('edit-issue-form')
+  editIssueForm.addEventListener('submit', function (evt){
+    evt.preventDefault()   
+    //setFormToBoardID()
+    const issueID= currentIssueID
+    const formData = new FormData(this)
+    const searchParams = new URLSearchParams()
+    for (const pair of formData){
+        searchParams.append(pair[0], pair[1])
+    }
+    console.log(searchParams)
+    console.log(issueID)
+    fetch(`${kB_APIURL}issues/${issueID}`, {
+        method: 'PATCH',
+        body: searchParams,
+    })
+    .then( response => {
+        console.log(response)
+        editIssueForm.reset()
+        while (kanboard.firstChild) {
+            kanboard.removeChild(kanboard.firstChild)}
+        populateIssuesBoard(currentBoardID)
+        return response.text()
+    })
+    .catch (err =>{
+        console.error(err)
+    })
+    closeModal()
+  })
+  //creates event listeners and assigns current ids
+function passIDtoEditButtons(){
+    issueEditButton.forEach(button =>button.addEventListener('click', (evt) =>{
+    let idToPass = evt.target.getAttribute("data-id")
+    issueToEdit(idToPass)
+    console.log(idToPass)
+  }))
+}
+  function issueToEdit(id){
+ currentIssueID = id
+  }
+//   function setFormToIssueID (){
+//     let boardIDsubmission = document.createElement('div')
+//     boardIDsubmission.innerHTML = `<input type="hidden" name="parentBoardId" value="${currentBoardID}" />`
+//     console.log(boardIDsubmission)
+//   editIssueForm.append(boardIDsubmission)
+//  }
+
 //DOM OPERATIONS
 //Project ID catcher
 projectDropDown.addEventListener('click', (evt)=>{
@@ -269,12 +385,20 @@ projectDropDown.addEventListener('click', (evt)=>{
     currentProjectID = evt.target.id
     
     populateKanboard()
-    let title = projectsArray.forEach(prjt =>{
-        if(prjt.ID == currentProjectID){
-            projectTitleDisplay.innerHTML = `${prjt.title}` 
-        }
-    }) 
+    // let title = 
+    projectNameDisplay()
+   
 })
+
+function projectNameDisplay(){
+    projectsArray.forEach(prjt =>{
+        if(prjt.ID == currentProjectID){
+            if(prjt.description)
+            projectTitleDisplay.innerHTML = `<div class="brand-logo">${prjt.title}<a href="#edit-project-modal" class="modal-trigger"><span class="material-icons">edit</span></a></div> <div class="right" style="font-size:1rem">${prjt.description}</div>` 
+            else projectTitleDisplay.innerHTML = `<div class="brand-logo">${prjt.title} <a href="#edit-project-modal" class="modal-trigger"><span class="material-icons">edit</span></a></div>`
+            
+        }
+    }) }
 // Board ID catcher and column builder
 boardsSidebar.addEventListener('click', (evt)=>{
     evt.preventDefault()
@@ -290,7 +414,8 @@ boardsSidebar.addEventListener('click', (evt)=>{
             buildStatusColumns(brd)
             }
         })
-        
+        // while (kanboard.firstChild) {
+        //     kanboard.removeChild(kanboard.firstChild)}
         populateIssuesBoard(currentBoardID)
     }
     console.log("This is the current BoardID: "+currentBoardID)
@@ -319,6 +444,7 @@ function populateProjects(array){
 //empties the list before building it
     projectsArray = []
     boardsArray = []
+    currentBoardID=""
     
     
     while (projectDropDown.firstChild) {
@@ -333,6 +459,7 @@ array.forEach(prjt => {let project = new Project;
                             project.title = prjt.title
                             project.boards = prjt.boards
                             project.issues = prjt.issues
+                            project.description = prjt.description
                             projectCardBuilder(project)
                             projectsArray.push(project)
 })
@@ -385,6 +512,7 @@ function populateBoardsSidebar(projectID){
                 newIssueButton.style.display = "none";
             }else{IssueButton.style.display = "initial"; }
             populateIssuesBoard(currentBoardID)
+            boardEditButton = document.querySelectorAll(".board-edit-button")
         }
     })
 }
@@ -408,7 +536,7 @@ function boardCardBuilder(board, projectID){
     // })
     boardCard.innerHTML = `<div class="card-panel teal white-text fullclick" id="${board.ID}">
                                 
-                                <span class="card-title"><h5>${board.name}</h5></span>
+                                <span class="card-title"><h5>${board.name}</h5> <p class="right"><a href="#edit-board-modal" class="white-text board-edit-button modal-trigger" style="z-index:3">edit<i class="tiny material-icons">edit</i></a></p></span>
                                 <div class="divider"></div>
                                 <div class="card-content">
                                     <p>${board.description}</p>                            
@@ -419,20 +547,20 @@ function boardCardBuilder(board, projectID){
 }
 
 function buildStatusColumns(board){
-    board.issueStates.forEach((state,index) =>{
+   
+    boardIssueColumnArray = board.issueStates
+    boardIssueColumnArray.forEach((state,index) =>{
         let boardIssueColumn = document.createElement('div')
         if(index ==0){
         boardIssueColumn.innerHTML = `<div class="col s12 m6 l3 cyan darken-3 kanban-state-column">
-                                            <div class="row" id="board-states-container">
+                                            <div class="row" id="">
                                                 <!-- column for header -->
                                                 <p><h5 class="grey-text text-lighten-5 center">${state}</h5></p>
                                             </div>
                                             <div class="row">
                                                 <div  class="board-issues-container" id="${state}container">
                                                 <!-- cards in here -->
-                                                    
-                                                    
-                                                        <!-- end of issue cards  -->
+                                                </div>
                                                 <div class="col l12" id="new-issue">
                                                     <div class="card">
                                                         <div class="card-content">
@@ -447,7 +575,7 @@ function buildStatusColumns(board){
                                         </div>`
         }else{
             boardIssueColumn.innerHTML = `<div class="col s12 m6 l3 cyan darken-3 kanban-state-column">
-                                            <div class="row" id="board-states-container">
+                                            <div class="row" id="">
                                                 <!-- column for header -->
                                                 <p><h5 class="grey-text text-lighten-5 center">${state}</h5></p>
                                             </div>
@@ -465,15 +593,18 @@ function buildStatusColumns(board){
 
     kanboard.appendChild(boardIssueColumn)
     })
-
+    makeCardsDraggable()
 }
 
 function populateIssuesBoard(boardID){
+   
     console.log("populating issues...")
     fetch(`${kB_APIURL}issues`)
         .then(response => response.json())
         .then(responseParsed =>{
-            responseParsed.issues.forEach(iss => {let issue = new Issue;
+            responseParsed.issues.forEach(iss => {
+                console.log(iss)
+                let issue = new Issue;
                                                 issue.ID = iss._id;
                                                 issue.parentBoardId = iss.parentBoardId;
                                                 issue.title = iss.title;
@@ -483,34 +614,43 @@ function populateIssuesBoard(boardID){
                                                 issue.body = iss.body;   
                                                 console.log(issue)                                             
                                                 if(issue.parentBoardId == boardID){
-                                                    console.log("this is happening")
+                                                    console.log("building issue cards...")
                                                     issueCardBuilder(issue, boardID)
                                                     issuesArray.push(issue)
                                                 }
 
             })
+            issueEditButton = document.querySelectorAll(".issue-edit-button")
+            console.log(issueEditButton)
+            passIDtoEditButtons()
+     
         })
+        
 
 }
 
 function issueCardBuilder(issue, boardID){
-    console.log("this is happening")
-    let issueCard = document.createElement("li")
-issueCard.innerHTML = `<div class="col l12 draggable">
-                                <p><div class="card">
+    columnIssueContainerArray =document.querySelectorAll(".board-issues-container")
+    let issueCard = document.createElement("div")
+    issueCard.setAttribute("class", "col l12 draggable")             
+    issueCard.setAttribute("id", `${issue.ID}`)
+issueCard.innerHTML = `          <p><div class="card">
                                     <div class="card-content">
                                         <span class="card-title activator grey-text text-darken-4">${issue.title}<i class="material-icons right">more_vert</i></span>
-                                        <p><a href="#">edit</a></p>
                                     </div>
                                     <div class="card-reveal">
                                         <span class="card-title grey-text text-darken-4">${issue.title}<i class="material-icons right">close</i></span>
-                                        <p>${issue.body}</p>
+                                        <p class="section">${issue.body}</p>
+                                        <p class="right"><a href="#edit-issue-modal" class="cyan-text darken-3 modal-trigger issue-edit-button" data-id="${issue.ID}">edit<i class="tiny material-icons">edit</i></a></p>
                                     </div>
-                                </div></p>
-                              </div>`
+                                    </div></p>`
   
-boardIssueColumn.forEach(col => { if(issue.status+"container" == col.id){
-    col.id.appendChild(issueCard)
+
+console.log(boardIssueColumnArray)
+console.log(issue.status)
+console.log(columnIssueContainerArray)
+columnIssueContainerArray.forEach(col => { if(issue.status+"container" == col.id){
+    col.prepend(issueCard)
 }
 
 })

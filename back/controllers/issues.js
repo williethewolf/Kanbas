@@ -15,10 +15,10 @@ issueRouter.get('/', (req,res) =>{
             issues: allIssues.map(issue =>{
                 return{
                     _id: issue._id,
-                    parentProjectId: issue.parentBoardId,
+                    parentBoardId: issue.parentBoardId,
                     title: issue.title,
                     body : issue.body,
-                    status: issue.title.status,
+                    status: issue.status,
                     completed: issue.completed,
                     type: issue.type,
                     priority: issue.priority,
@@ -91,7 +91,7 @@ issueRouter.patch('/:issueId', (req, res) =>{
         {new: true}
     )
     .then(patchedIssue => res.status(200).json(patchedIssue))
-    .catch(err => res.status(500).jason({error:err}))
+    .catch(err => res.status(500).json({error:err}))
 })
 
 //CREATE

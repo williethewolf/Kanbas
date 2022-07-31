@@ -8,7 +8,7 @@ const Schema = mongoose.Schema
 const issueSchema = new Schema({
     name: String,
     issues: Array,
-    issueStates: {type: Array, default: ["IceBox","To do", "Done"]},
+    issueStates: {type: Array, default: ["IceBox","To-do", "Done"]},
     issueTypes: Array,
     parentProjectId:{type: Schema.Types.ObjectId, ref: 'Project'},
     description: String,
