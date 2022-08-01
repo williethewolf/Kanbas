@@ -59,8 +59,8 @@ const kanboard = document.querySelector("#board")
 const boardIssueContainer = document.querySelectorAll(".board-issues-container")
 const boardIssueColumn =document.querySelectorAll(".kanban-state-column")
 //Dom selectors for edit buttons
-let issueEditButton = document.querySelectorAll(".issue-edit-button")
-let boardEditButton = document.querySelectorAll(".board-edit-button")
+let issueEditButtons = document.querySelectorAll(".issue-edit-button")
+let boardEditButtons = document.querySelectorAll(".board-edit-button")
 
 //WEB CSS INTERACTIVITY
 //button dropdown js
@@ -176,7 +176,6 @@ anyColumn.forEach((col, i) => {
 const newProjectForm = document.getElementById('new-project-form')
 newProjectForm.addEventListener('submit', function (evt){
     evt.preventDefault()
-    //console.log(evt)
     const formData = new FormData(this)
     const searchParams = new URLSearchParams()
     for (const pair of formData){
@@ -203,30 +202,72 @@ newProjectForm.addEventListener('submit', function (evt){
 const editProjectForm = document.getElementById('edit-project-form')
 editProjectForm.addEventListener('submit', function (evt){
     evt.preventDefault()
-    //console.log(evt)
-    const formData = new FormData(this)
-    const searchParams = new URLSearchParams()
-    for (const pair of formData){
-        searchParams.append(pair[0], pair[1])
-    }
+     //check if delete button was used
+     let submitter = evt.submitter
+     console.log("event submitter :"+ submitter)
+     console.log("event :"+ evt)
+     if(submitter.matches('[data-action="DELETE"]')){
+        
+        fetch(`${kB_APIURL}projects/${currentProjectID}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json'
+            }})
+        .then(res => res.text()) // or res.text()
+        .then(res => console.log(res))
+     }else{
+ 
+    
+        const formData = new FormData(this)
+        const searchParams = new URLSearchParams()
+        for (const pair of formData){
+            searchParams.append(pair[0], pair[1])
+        }
 
+        fetch(`${kB_APIURL}projects/${currentProjectID}`, {
+            method: 'PATCH',
+            body: searchParams,
+        })
+        .then( response => {
+            console.log(response)
+            editProjectForm.reset()
+            //these don't really execute do they?
+            populateKanboard()
+            projectNameDisplay()
+            return response.text()
+        })
+        .catch (err =>{
+            console.error(err)
+        })
+        closeModal()
+    }
+  })
+
+//delete project
+const deleteProjectButton = document.getElementById('delete-project-button')
+deleteProjectButton.addEventListener('click', function (evt){
+    evt.preventDefault()
     fetch(`${kB_APIURL}projects/${currentProjectID}`, {
-        method: 'PATCH',
-        body: searchParams,
-    })
-    .then( response => {
-        console.log(response)
-        editProjectForm.reset()
-        //these don't really execute do they?
-        populateKanboard()
-        projectNameDisplay()
-        return response.text()
-    })
+        method: 'DELETE',
+        headers: {
+            'Content-type': 'application/json'
+        }})
+    .then(res => {
+        res.text() // or res.json()
+     populateKanboard()
+     projectNameDisplay("reset")
+    }) 
+    //.then(res => console.log(res))
     .catch (err =>{
         console.error(err)
     })
     closeModal()
-  })
+    //NEEDS TO GO EVEN DEEPER. AFTER FINDING THE PROJECT IT SHOULD 
+    //FIND ALL THE BOARDS PARENTED BY THE PROJECT. ONCE FOUND, WE SHOULD 
+    //FIND ALL THE ISSUE PARENTED BY THOSE BOARDS, AND THEN, DELETE THEM ALL.
+
+})
+
 
 //NEW Boards modal
   const newBoardForm = document.getElementById('new-board-form')
@@ -247,8 +288,17 @@ editProjectForm.addEventListener('submit', function (evt){
     })
     .then( response => {
         console.log(response)
+        removeProjectIDfromForm()
         newBoardForm.reset()
-        populateKanboard()
+        cleanSlateBoards()
+        currentBoardID=undefined
+            // ERROR TRIGGERS HERE BUT IT DOESNT SEEM TO BREAK APP
+            // script.js:636 Uncaught (in promise) 
+            // TypeError: Cannot read properties of undefined (reading 'issueStates')
+            // at buildStatusColumns (script.js:636:35)
+            // at script.js:594:13
+        populateBoardsSidebar()
+        // populateKanboard()
         return response.text()
     })
     .catch (err =>{
@@ -258,8 +308,13 @@ editProjectForm.addEventListener('submit', function (evt){
   })
   function setFormToProjectID (){
     let projectIDsubmission = document.createElement('div')
+    projectIDsubmission.setAttribute("id","tempIDholder")
     projectIDsubmission.innerHTML = `<input type="hidden" name="parentProjectId" value="${currentProjectID}" />`
-  newBoardForm.append(projectIDsubmission)
+    newBoardForm.append(projectIDsubmission)
+  }
+  function removeProjectIDfromForm(){
+    tempIDholder = document.getElementById("tempIDholder")
+    tempIDholder.remove()
   }
 
   //EDIT Boards modal
@@ -282,7 +337,8 @@ editProjectForm.addEventListener('submit', function (evt){
     .then( response => {
         console.log(response)
         editBoardForm.reset()
-        populateKanboard()
+        cleanSlateBoards()
+        populateBoardsSidebar()
         return response.text()
     })
     .catch (err =>{
@@ -290,16 +346,38 @@ editProjectForm.addEventListener('submit', function (evt){
     })
     closeModal()
   })
-  function setFormToProjectID (){
-    let projectIDsubmission = document.createElement('div')
-    projectIDsubmission.innerHTML = `<input type="hidden" name="parentProjectId" value="${currentProjectID}" />`
-  newBoardForm.append(projectIDsubmission)
-  }
+
+  //delete board
+const deleteBoardButton = document.getElementById('delete-board-button')
+deleteBoardButton.addEventListener('click', function (evt){
+    evt.preventDefault()
+    fetch(`${kB_APIURL}boards/${currentBoardID}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-type': 'application/json'
+        }})
+    .then(res => {
+        res.text() // or res.json()
+        while (kanboard.firstChild) {
+            kanboard.removeChild(kanboard.firstChild)}
+        cleanSlateBoards()
+        populateBoardsSidebar()
+    }) 
+    // .then(res => console.log(res))
+    .catch (err =>{
+        console.error(err)
+    })
+    closeModal()
+    //NEEDS TO GO EVEN DEEPER. AFTER FINDING THE BOARD IT SHOULD 
+    //FIND ALL THE ISSUE PARENTED BY THOSE BOARDS, AND THEN, DELETE THEM ALL.
+
+})
+
 
   //NEW Issues modal
   const newIssueForm = document.getElementById('new-issue-form')
   newIssueForm.addEventListener('submit', function (evt){
-    evt.preventDefault()   
+    evt.preventDefault() 
     setFormToBoardID()
     const formData = new FormData(this)
     const searchParams = new URLSearchParams()
@@ -314,7 +392,10 @@ editProjectForm.addEventListener('submit', function (evt){
     })
     .then( response => {
         console.log(response)
+        removeProjectIDfromForm()
+        
         newIssueForm.reset()
+        cleanSlateIssues()
         populateIssuesBoard(currentBoardID)
         return response.text()
     })
@@ -325,16 +406,17 @@ editProjectForm.addEventListener('submit', function (evt){
   })
   function setFormToBoardID (){
     let boardIDsubmission = document.createElement('div')
+    boardIDsubmission.setAttribute("id","tempIDholder")
     boardIDsubmission.innerHTML = `<input type="hidden" name="parentBoardId" value="${currentBoardID}" />`
     console.log(boardIDsubmission)
   newIssueForm.append(boardIDsubmission)
+
   }
 
   //EDIT Issues modal
   const editIssueForm = document.getElementById('edit-issue-form')
   editIssueForm.addEventListener('submit', function (evt){
-    evt.preventDefault()   
-    //setFormToBoardID()
+    evt.preventDefault()
     const issueID= currentIssueID
     const formData = new FormData(this)
     const searchParams = new URLSearchParams()
@@ -350,8 +432,7 @@ editProjectForm.addEventListener('submit', function (evt){
     .then( response => {
         console.log(response)
         editIssueForm.reset()
-        while (kanboard.firstChild) {
-            kanboard.removeChild(kanboard.firstChild)}
+        cleanSlateIssues()
         populateIssuesBoard(currentBoardID)
         return response.text()
     })
@@ -360,9 +441,37 @@ editProjectForm.addEventListener('submit', function (evt){
     })
     closeModal()
   })
-  //creates event listeners and assigns current ids
+
+  //delete issue
+  const deleteIssueButton = document.getElementById('delete-issue-button')
+  deleteIssueButton.addEventListener('click', function (evt){
+      evt.preventDefault()
+      fetch(`${kB_APIURL}issues/${currentIssueID}`, {
+          method: 'DELETE',
+          headers: {
+              'Content-type': 'application/json'
+          }})
+      .then(res => {
+          res.text() // or res.json()
+          while (kanboard.firstChild) {
+              kanboard.removeChild(kanboard.firstChild)}
+          cleanSlateIssues()
+          populateIssuesBoard(currentBoardID)
+      }) 
+      // .then(res => console.log(res))
+      .catch (err =>{
+          console.error(err)
+      })
+      closeModal()
+      //NEEDS TO GO EVEN DEEPER. AFTER FINDING THE BOARD IT SHOULD 
+      //FIND ALL THE ISSUE PARENTED BY THOSE BOARDS, AND THEN, DELETE THEM ALL.
+  
+  })
+  
+
+  //creates event listeners and assigns current ids for issue manipulation
 function passIDtoEditButtons(){
-    issueEditButton.forEach(button =>button.addEventListener('click', (evt) =>{
+    issueEditButtons.forEach(button =>button.addEventListener('click', (evt) =>{
     let idToPass = evt.target.getAttribute("data-id")
     issueToEdit(idToPass)
     console.log(idToPass)
@@ -390,7 +499,9 @@ projectDropDown.addEventListener('click', (evt)=>{
    
 })
 
-function projectNameDisplay(){
+function projectNameDisplay(reset){
+    if(reset)projectTitleDisplay.innerHTML = `<div class="brand-logo">Select a Project</div>`
+    else 
     projectsArray.forEach(prjt =>{
         if(prjt.ID == currentProjectID){
             if(prjt.description)
@@ -412,10 +523,11 @@ boardsSidebar.addEventListener('click', (evt)=>{
     if (currentBoardID && currentBoardID != null){
         boardsArray.forEach(brd => {if (brd.ID == currentBoardID){
             buildStatusColumns(brd)
+            // while (kanboard.firstChild) {
+            //     kanboard.removeChild(kanboard.firstChild)}
             }
         })
-        // while (kanboard.firstChild) {
-        //     kanboard.removeChild(kanboard.firstChild)}
+        
         populateIssuesBoard(currentBoardID)
     }
     console.log("This is the current BoardID: "+currentBoardID)
@@ -446,13 +558,15 @@ function populateProjects(array){
     boardsArray = []
     currentBoardID=""
     
-    
-    while (projectDropDown.firstChild) {
-        projectDropDown.removeChild(projectDropDown.firstChild)}
-    while (boardsSidebar.firstChild) {
-            boardsSidebar.removeChild(boardsSidebar.firstChild)}
-    while (kanboard.firstChild) {
-        kanboard.removeChild(kanboard.firstChild)}
+    cleanSlateProjects()
+cleanSlateBoards()
+cleanSlateIssues()
+    // while (projectDropDown.firstChild) {
+    //     projectDropDown.removeChild(projectDropDown.firstChild)}
+    // while (boardsSidebar.firstChild) {
+    //         boardsSidebar.removeChild(boardsSidebar.firstChild)}
+    // while (kanboard.firstChild) {
+    //     kanboard.removeChild(kanboard.firstChild)}
 //(re)builds the list        
 array.forEach(prjt => {let project = new Project;
                             project.ID = prjt._id
@@ -479,6 +593,7 @@ function projectCardBuilder(project){
 }
 
 function populateBoardsSidebar(projectID){
+    if (currentProjectID) projectID = currentProjectID
     fetch(`${kB_APIURL}boards`)
     .then(response => response.json())
     .then(responseParsed =>{ 
@@ -512,7 +627,7 @@ function populateBoardsSidebar(projectID){
                 newIssueButton.style.display = "none";
             }else{IssueButton.style.display = "initial"; }
             populateIssuesBoard(currentBoardID)
-            boardEditButton = document.querySelectorAll(".board-edit-button")
+            boardEditButtons = document.querySelectorAll(".board-edit-button")
         }
     })
 }
@@ -620,8 +735,8 @@ function populateIssuesBoard(boardID){
                                                 }
 
             })
-            issueEditButton = document.querySelectorAll(".issue-edit-button")
-            console.log(issueEditButton)
+            issueEditButtons = document.querySelectorAll(".issue-edit-button")
+            console.log(issueEditButtons)
             passIDtoEditButtons()
      
         })
@@ -641,7 +756,7 @@ issueCard.innerHTML = `          <p><div class="card">
                                     <div class="card-reveal">
                                         <span class="card-title grey-text text-darken-4">${issue.title}<i class="material-icons right">close</i></span>
                                         <p class="section">${issue.body}</p>
-                                        <p class="right"><a href="#edit-issue-modal" class="cyan-text darken-3 modal-trigger issue-edit-button" data-id="${issue.ID}">edit<i class="tiny material-icons">edit</i></a></p>
+                                        <p class="right"><a href="#edit-issue-modal" class="cyan-text darken-3 modal-trigger issue-edit-button" data-id="${issue.ID}">edit<i class="tiny material-icons issue-edit-button" data-id="${issue.ID}">edit</i></a></p>
                                     </div>
                                     </div></p>`
   
@@ -656,6 +771,27 @@ columnIssueContainerArray.forEach(col => { if(issue.status+"container" == col.id
 })
 }
                             
+//Little helper functions
+cleanSlateProjects()
+cleanSlateBoards()
+cleanSlateIssues()
+//Cleanup crew
+function cleanSlateProjects(){
+while (projectDropDown.firstChild) {
+    projectDropDown.removeChild(projectDropDown.firstChild)}
+}
+function cleanSlateBoards(){
+while (boardsSidebar.firstChild) {
+        boardsSidebar.removeChild(boardsSidebar.firstChild)}
+}
+function cleanSlateIssues(){
+while (kanboard.firstChild) {
+    kanboard.removeChild(kanboard.firstChild)}
+
+    boardsArray.forEach(brd => {if (brd.ID == currentBoardID){
+        buildStatusColumns(brd)}})
+    
+}
 
 
 

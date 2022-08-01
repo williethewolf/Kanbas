@@ -18,6 +18,9 @@
     box-shadow: 2px -2px 4px rgb(0 0 0 / 0.4)!important
 }
 
+/* .boards-sidebar{
+    overflow-y: auto !important;
+} */
 
 .card .card-reveal{
     overflow-y: visible;
