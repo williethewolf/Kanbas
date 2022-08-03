@@ -361,6 +361,7 @@ deleteBoardButton.addEventListener('click', function (evt){
         while (kanboard.firstChild) {
             kanboard.removeChild(kanboard.firstChild)}
         cleanSlateBoards()
+        cleanSlateIssues()
         populateBoardsSidebar()
     }) 
     // .then(res => console.log(res))
