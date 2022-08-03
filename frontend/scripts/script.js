@@ -338,6 +338,7 @@ deleteProjectButton.addEventListener('click', function (evt){
         console.log(response)
         editBoardForm.reset()
         cleanSlateBoards()
+        cleanSlateIssues()
         populateBoardsSidebar()
         return response.text()
     })
