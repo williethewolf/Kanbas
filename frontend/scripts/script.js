@@ -338,7 +338,8 @@ deleteProjectButton.addEventListener('click', function (evt){
         console.log(response)
         editBoardForm.reset()
         cleanSlateBoards()
-        cleanSlateIssues()
+        cleanAllBoard()
+        //cleanSlateIssues()
         populateBoardsSidebar()
         return response.text()
     })
@@ -362,7 +363,8 @@ deleteBoardButton.addEventListener('click', function (evt){
         while (kanboard.firstChild) {
             kanboard.removeChild(kanboard.firstChild)}
         cleanSlateBoards()
-        cleanSlateIssues()
+        //cleanSlateIssues()
+        cleanAllBoard()
         populateBoardsSidebar()
     }) 
     // .then(res => console.log(res))
@@ -794,6 +796,10 @@ while (kanboard.firstChild) {
         buildStatusColumns(brd)}})
     
 }
+function cleanAllBoard(){
+    while (kanboard.firstChild) {
+        kanboard.removeChild(kanboard.firstChild)}
+    }
 
 
 
