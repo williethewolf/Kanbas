@@ -1,5 +1,5 @@
 //KANBOARD API URL
-kB_APIURL = "http://localhost:5501/"
+kB_APIURL = "https://kanbas-kanban-board.herokuapp.com/"
 
 //variables
 let projectsArray = []
