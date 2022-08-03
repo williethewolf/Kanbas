@@ -524,6 +524,7 @@ boardsSidebar.addEventListener('click', (evt)=>{
     }else{
         currentBoardID = evt.target.id   
     }
+    cleanAllBoard()
     if (currentBoardID && currentBoardID != null){
         boardsArray.forEach(brd => {if (brd.ID == currentBoardID){
             buildStatusColumns(brd)
@@ -666,7 +667,7 @@ function boardCardBuilder(board, projectID){
 }
 
 function buildStatusColumns(board){
-   
+    cleanAllBoard()
     boardIssueColumnArray = board.issueStates
     boardIssueColumnArray.forEach((state,index) =>{
         let boardIssueColumn = document.createElement('div')
