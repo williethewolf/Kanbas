@@ -1,4 +1,4 @@
-# Kanboard
+# Kanbas
 A simple Kanban based project manager full stack app
 ![ScreenShot](/assets/Screenshot%202022-07-27%20004057.png)
 
